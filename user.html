@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Page</title>
+    <style>
+        /* Your CSS styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5; /* Light background color */
+            color: #333; /* Text color */
+        }
+        header {
+            padding: 20px;
+            background-color: #333; /* Header background color */
+            color: #fff; /* Text color */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        header img {
+            height: 50px; /* Adjust height as needed */
+            margin-right: 20px;
+        }
+        main {
+            padding: 20px;
+        }
+        .menu-section {
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .menu-section h2 {
+            margin-top: 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #333; /* Section title underline */
+            color: #4CAF50; /* Special color for section titles */
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 20px; /* Adjust the gap as needed */
+            background-color: #fff; /* White background for menu items */
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Box shadow for elevation */
+        }
+        .item-info {
+            flex: 1; /* Take up remaining space */
+        }
+        .item-info h3 {
+            margin: 0;
+        }
+        .item-info p {
+            margin: 0 0 10px;
+        }
+        .item-info button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .menu-item img {
+            max-width: 100px; /* Adjust the image size as needed */
+            height: auto;
+        }
+        #cart {
+            display: none; /* Initially hide cart */
+            background-color: #f9f9f9; /* Light gray background for cart */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Box shadow for elevation */
+        }
+        #cart-items {
+            list-style-type: none;
+            padding: 0;
+        }
+        footer {
+            padding: 20px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .menu-item.highlight {
+            background-color: #e0ffe0; /* Light gray background for highlighted items */
+        }
+        .menu-section.highlight {
+            background-color: #e0ffe0; /* Lighter gray background for highlighted sections */
+        }
+
+         /* Dropdown container */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Username circle */
+.username-circle {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    margin-right: 10px;
+}
+
+/* Dropdown button */
+.dropbtn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 16px;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu on hover */
+.user-dropdown:hover .dropdown-content {
+    display: block;
+}
+ 
+    </style>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+<header>
+    {% load static %}
+    <img src="{% static 'logo.png' %}" alt="Canteen Logo">
+    <div style="text-align: center;">
+        <h1 style="display: inline-block; font-weight: bold;">My Canteen</h1>
+    </div>
+        <div>
+            <div class="user-dropdown">
+    <div class="username-circle">&#128100;</div>
+    <p>Welcome, {{ user.username }}</p>
+    <div class="dropdown">
+        <button class="dropbtn"></button>
+        <div class="dropdown-content" id="notification-dropdown">
+            <a href="#" onclick="showNotificationsInDropdown(['Notification 1', 'Notification 2', 'Notification 3'])">View Notification</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+</header>
+<main>
+  <!-- Loop through each menu section -->
+{% for section in sections %}
+<section class="menu-section" id="{{ section.name }}">
+    <h2>{{ section.name }}</h2>
+    <!-- Loop through each menu item in the section -->
+    {% for item in section.item_set.all %}
+    <div class="menu-item">
+        <div class="item-info">
+            <h3>{{ item.name }}</h3>
+            <p>Description: {{ item.description }}</p>
+            <p>Price: ₹{{ item.price }}</p>
+            <button onclick="addToCart('{{ item.name }}', {{ item.price }})">Add to Cart</button>
+        </div>
+        <img src="static{{ item.image.url }}" alt="{{ item.name }} Image">
+    </div>
+    {% endfor %}
+</Section>
+{% endfor %}
+</main>
+<div id="cart">
+    <h2>Cart</h2>
+    <ul id="cart-items">
+        <!-- Cart items will be dynamically added here -->
+    </ul>
+    <p>Total: ₹<span id="total-price">0</span></p>
+    <button onclick="checkout()">Checkout</button>
+</div>
+<footer>
+    <p>Managed by Shri. Sukh Sagar Hospitality Services</p>
+</footer>
+<script>
+    var cart = []; // Array to store cart items
+
+    // Function to show/hide menu items when section block is clicked
+    document.querySelectorAll('.menu-section').forEach(function(section) {
+        section.addEventListener('click', function() {
+            // Hide all menu items
+            document.querySelectorAll('.menu-item').forEach(function(item) {
+                item.style.display = 'none';
+            });
+            // Show menu items in the clicked section
+            this.querySelectorAll('.menu-item').forEach(function(item) {
+                item.style.display = 'flex';
+            });
+        });
+    });
+
+    // Function to add search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to add search functionality
+        var searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                var searchText = (this.value || '').trim().toLowerCase();
+                if (searchText === '') {
+                    // If search bar is empty, remove highlight classes from all sections and items
+                    document.querySelectorAll('.menu-section').forEach(function(section) {
+                        section.classList.remove('highlight');
+                    });
+                    document.querySelectorAll('.menu-item').forEach(function(item) {
+                        item.classList.remove('highlight');
+                    });
+                } else {
+                    // If search bar has text, apply highlight classes based on search query
+                    document.querySelectorAll('.menu-section').forEach(function(section) {
+                        var sectionTitle = section.querySelector('h2');
+                        if (sectionTitle) {
+                            var sectionTitleText = sectionTitle.textContent.trim().toLowerCase();
+                            var sectionItems = section.querySelectorAll('.menu-item');
+                            var sectionMatch = sectionTitleText.includes(searchText);
+                            section.classList.toggle('highlight', sectionMatch);
+                            sectionItems.forEach(function(item) {
+                                var itemName = item.querySelector('h3');
+                                if (itemName) {
+                                    var itemNameText = itemName.textContent.trim().toLowerCase();
+                                    var itemMatch = itemNameText.includes(searchText);
+                                    item.classList.toggle('highlight', itemMatch);
+                                    // Highlight section if the item is within it
+                                    if (itemMatch) {
+                                        section.classList.add('highlight');
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function addToCart(itemName, price) {
+        var cartItems = document.getElementById('cart-items');
+        var newItem = document.createElement('li');
+        newItem.textContent = itemName + ' - ₹' + price.toFixed(2);
+        cartItems.appendChild(newItem);
+        // Add item to cart array
+        cart.push({ name: itemName, price: price });
+        updateTotalPrice();
+        // Add a remove button to remove the item from the cart
+        var removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.onclick = function() {
+            cartItems.removeChild(newItem);
+            // Remove item from cart array
+            cart = cart.filter(function(item) {
+                return item.name !== itemName;
+            });
+            updateTotalPrice();
+        };
+        newItem.appendChild(removeButton);
+
+        // Show the cart when items are added
+        document.getElementById('cart').style.display = 'block';
+    }
+
+    // Function to update the total price in the cart
+    function updateTotalPrice() {
+        var totalPrice = cart.reduce(function(sum, item) {
+            return sum + item.price;
+        }, 0);
+        document.getElementById('total-price').textContent = totalPrice.toFixed(2);
+    }
+
+    // Function to handle checkout
+    function checkout() {
+        var options = {
+            "key": "rzp_test_mho1jNp0Qbmrpa", // Replace with your Razorpay API key
+            "amount": parseInt(document.getElementById('total-price').textContent) * 100, // Total amount in paisa
+            "currency": "INR",
+            "name": "My Canteen",
+            "description": "Payment for food items",
+            "image": "{% static 'logo.png' %}", // URL of your canteen logo
+            "handler": function (response){
+                // Handle successful payment
+                alert('Payment successful! Payment ID: ' + response.razorpay_payment_id);
+                // You can perform further actions like updating database, sending confirmation emails, etc.
+            },
+            "prefill": {
+                "name": "Customer Name", // Prefill customer's name
+                "email": "customer@example.com", // Prefill customer's email
+                // You can prefill other details like phone number, address, etc. if available
+            },
+            "theme": {
+                "color": "#F37254" // Customize the color of the payment button
+            }
+        };
+    
+        var razorpay = new Razorpay(options);
+        razorpay.open();
+
+
+    }
+
+    function showNotificationsInDropdown(notifications) {
+        var notificationDropdown = document.getElementById('notification-dropdown');
+        // Clear previous notifications
+        notificationDropdown.innerHTML = '';
+        // Add new notifications
+        notifications.forEach(function(notification) {
+            var notificationItem = document.createElement('div');
+            notificationItem.textContent = notification;
+            notificationDropdown.appendChild(notificationItem);
+        });
+    }
+
+    // Replace this URL with the actual URL for fetching notifications
+    var url = "/get_notifications/";
+
+    // Make an AJAX request to fetch notifications data
+    fetch(url)
+        .then(response => response.json())
+        .then(data => showNotificationsInDropdown(data))
+        .catch(error => console.error('Error fetching notifications:', error));
+    
+</script>
+</body>
+</html>

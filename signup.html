@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        /* CSS styles */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Mulish', sans-serif;
+            transition: 0.3s all ease-in-out;
+        }
+        body {
+            display: flex;
+            flex-direction: column; /* Align header and footer at the top and bottom respectively */
+            min-height: 100vh; /* Ensure footer sticks to the bottom even if content is less */
+            background-color: #fff;
+        }
+        .content {
+            flex-grow: 1; /* Fill remaining space between header and footer */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .shadow-wrap {
+            border-radius: 5px;
+            padding: 25px;
+            background-color: #F0F2FB;
+        }
+        .form-wrap {
+            background-color: #fff;
+            padding: 70px;
+        }
+        .form-wrap form * {
+            display: block;
+            width: 100%;
+        }
+        .form-wrap form label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 26px;
+        }
+        .form-wrap form input {
+            padding: 12px 20px;
+            border-radius: 5px;
+            border: 1px solid #DAE1F5;
+            background: #FFF;
+            color: #545D7A;
+        }
+        .form-wrap button {
+            border-radius: 5px;
+            background: #10182F;
+            color: #FFF;
+            cursor: pointer;
+            text-align: center;
+            font-size: 16px;
+            padding: 12px 68px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            margin-top: 30px;
+            line-height: 26px;
+        }
+        /* Header styles */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+        }
+        header img {
+            height: 50px;
+        }
+        header h1 {
+            margin: 0;
+        }
+        /* Footer styles */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    {% load static %}
+    <img src="{% static 'logo.png' %}" alt="Canteen Logo">
+    <div>
+        <h1>My Canteen</h1>
+    </div>
+</header>
+<div class="content">
+    <div class="shadow-wrap">
+        <div class="form-wrap">
+            <h2>Sign Up</h2>
+            <form method="post" >
+                {% csrf_token %}
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+                <label for="password1">Password:</label>
+                <input type="password" id="password1" name="password1">
+                <label for="password2">Confirm Password:</label>
+                <input type="password" id="password2" name="password2">
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</div>
+<footer>
+    <p>Managed by Shri. Sukh Sagar Hospitality Services</p>
+</footer>
+
+<script>
+    // Client-side form validation using JavaScript
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        var password = document.getElementById('password').value;
+        var confirm_password = document.getElementById('confirm_password').value;
+
+        if (password !== confirm_password) {
+            alert("Passwords do not match");
+            event.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>
